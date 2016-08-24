@@ -48,7 +48,7 @@ public class CFMetricsController {
 		CloudFoundryClient client = loginCloudFoundry();
 
 		if (resourceType.equals("MEM")) {
-			long memoryquota = client.getQuotaByName("trial", true).getMemoryLimit() * 1024 * 1024;
+			long memoryquota = client.getQuotaByName("default", true).getMemoryLimit() * 1024 * 1024;
 
 			for (CloudApplication application : client.getApplications()) {
 				memoryquota = memoryquota

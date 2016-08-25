@@ -59,7 +59,7 @@ public class CFMetricsController {
 			double cpuQuota = 1.0;
 			for (CloudApplication application : client.getApplications()) {
 				cpuQuota = cpuQuota
-						- ((client.getApplicationStats(application.getName()).getRecords().get(0).getUsage().getMem()));
+						- ((client.getApplicationStats(application.getName()).getRecords().get(0).getUsage().getCpu()));
 			}
 			return String.valueOf(cpuQuota);
 		} else {
@@ -155,19 +155,70 @@ public class CFMetricsController {
 	}
 		
 
-		@RequestMapping(value = "/getQuota/{resourceType}", method=RequestMethod.GET, consumes= MediaType.APPLICATION_JSON_VALUE)
-		public Long  getQuotaType(@PathVariable final String resourceType ){
+		@RequestMapping(value = "/getQuota/{resourceType}/{orgName:.+}", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
+		public Double  getQuotaType(@PathVariable final String resourceType , @PathVariable final String orgName ){
 			CloudFoundryClient client = loginCloudFoundry();
+			
+			
+			final List<CloudApplication> cloudApplications = client.getApplications();
+			final List<CloudSpace> cloudSpaces = client.getSpaces();
+			ChargeBackAggregrateVO chargeBackAggregrateVO;
+			final List<ChargeBackAggregrateVO> chargeBackAggregrateVOList = new ArrayList<>();
+			for(final CloudApplication application : cloudApplications){
+				chargeBackAggregrateVO = new ChargeBackAggregrateVO();
+				chargeBackAggregrateVO.setApplicationStats(client.getApplicationStats(application.getName()));
+				chargeBackAggregrateVO.setCloudApplication(application);
+				chargeBackAggregrateVO.setSpaces(cloudSpaces);
+				chargeBackAggregrateVOList.add(chargeBackAggregrateVO);
+			}
+			
+			final List<ChargeBackUsageResponse> chargeBackUsageResponseList = chargebackService.getChargeBackUsage(chargeBackAggregrateVOList);
 			if(resourceType.equals("MEM")){
-				long memoryquota = client.getQuotaByName("default", true).getMemoryLimit() * 1024 * 1024;
-				return memoryquota;
+				double mem= 0.0;
+				for(final ChargeBackUsageResponse chargeBackUsageResponse : chargeBackUsageResponseList){
+					if(chargeBackUsageResponse.getOrgName().equals(orgName)){
+					mem += Double.valueOf(client.getApplication(chargeBackUsageResponse.getAppname()).getMemory()*1024*1024);
+					}
+				}
+				return mem;
 			}else if(resourceType.equals("CPU")){
-				return 1L;
-			}else if(resourceType.equals("Disk ")){
+				double cpu= 0.0;
 				
-				return client.getApplications().stream().mapToLong(cloudapp-> cloudapp.getDiskQuota()).sum();
+				for(final ChargeBackUsageResponse chargeBackUsageResponse : chargeBackUsageResponseList){
+					
+					if(chargeBackUsageResponse.getOrgName().equals(orgName)){
+						
+						int size = client.getApplicationStats(chargeBackUsageResponse.getAppname()).getRecords().size();
+						cpu += ((client.getApplicationStats(chargeBackUsageResponse.getAppname()).getRecords().get(0).getUsage().getCpu()) /size);
+					}
+				}
+			
+				return cpu;
+			}else if(resourceType.equals("DISK")){
+				double disk= 0.0;
+				for(final ChargeBackUsageResponse chargeBackUsageResponse : chargeBackUsageResponseList){
+					if(chargeBackUsageResponse.getOrgName().equals(orgName)){
+					disk += Double.valueOf(client.getApplication(chargeBackUsageResponse.getAppname()).getDiskQuota()*1024*1024);
+					}
+				}
+				return disk;
 			}
 		return null;
-			
+	}
+		
+		
+		@RequestMapping(value = "/getTotalQuota/{resourceType}", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
+		public Double  getTotalQuota(@PathVariable final String resourceType){
+			CloudFoundryClient client = loginCloudFoundry();
+			if(resourceType.equals("MEM")){
+				return Double.valueOf(client.getQuotaByName("default", true).getMemoryLimit() * 1024 * 1024);
+			}else if(resourceType.equals("CPU")){
+				return 1.0;
+			}else if(resourceType.equals("DISK")){
+				
+				return Double.valueOf(client.getApplications().stream().mapToLong(cloudapp-> cloudapp.getDiskQuota()).sum()*1024*1024);
+			}
+	
+		return null;
 	}
 }

@@ -63,11 +63,8 @@ public class CFMetricsController {
 			}
 			return String.valueOf(cpuQuota);
 		} else {
-			// TODO : Not implemented for Disk usage 
 			return null;
 		}
-		
-
 	}
 
 	@RequestMapping(value = "/getInstanceMetrics", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)	
@@ -115,10 +112,9 @@ public class CFMetricsController {
 	
 	private CloudFoundryClient loginCloudFoundry() {
 		CloudCredentials credentials = new CloudCredentials("amit.bansal@capgemini.com", "Capgemini2016");
-		
 		//CloudFoundryClient client = new CloudFoundryClient(credentials, getTargetURL("https://api.cglean.com"));
-		CloudFoundryClient client = new CloudFoundryClient(credentials, getTargetURL("http://api.cglean.com"), null, (HttpProxyConfiguration) null, true);
 		
+		CloudFoundryClient client = new CloudFoundryClient(credentials, getTargetURL("http://api.cglean.com"), null, (HttpProxyConfiguration) null, true);
 		return client;
 		
 	}
@@ -156,5 +152,22 @@ public class CFMetricsController {
 		for(UsageSummary usageSummary : usageSummaryList){
 			chargebackService.persistUsageSummaryData(usageSummary);
 		}
+	}
+		
+
+		@RequestMapping(value = "/getQuota/{resourceType}", method=RequestMethod.GET, consumes= MediaType.APPLICATION_JSON_VALUE)
+		public Long  getQuotaType(@PathVariable final String resourceType ){
+			CloudFoundryClient client = loginCloudFoundry();
+			if(resourceType.equals("MEM")){
+				long memoryquota = client.getQuotaByName("default", true).getMemoryLimit() * 1024 * 1024;
+				return memoryquota;
+			}else if(resourceType.equals("CPU")){
+				return 1L;
+			}else if(resourceType.equals("Disk ")){
+				
+				return client.getApplications().stream().mapToLong(cloudapp-> cloudapp.getDiskQuota()).sum();
+			}
+		return null;
+			
 	}
 }

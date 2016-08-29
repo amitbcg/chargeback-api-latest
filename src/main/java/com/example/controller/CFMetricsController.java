@@ -1,8 +1,10 @@
 package com.example.controller;
 
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -86,12 +88,14 @@ public class CFMetricsController {
 	}
 	
 	@RequestMapping(value = "/getSpaceList/{orgName:.+}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)	
-	public List<String> getApplicationSpaceByOrg(@PathVariable String orgName ){
+	public List<String> getApplicationSpaceByOrg(@PathVariable String orgName ) throws UnsupportedEncodingException{
 		
-		CloudFoundryClient client = loginCloudFoundry();
+		final CloudFoundryClient client = loginCloudFoundry();
 		client.login();
+		
+		final String decodedOrgName = URLDecoder.decode(orgName, "UTF-8");
 		return client.getSpaces().stream().
-				filter(cloudspace -> cloudspace.getOrganization().getName().equals(orgName)).map(cloudspace -> cloudspace.getName()).collect(Collectors.toList());
+				filter(cloudspace -> cloudspace.getOrganization().getName().equals(decodedOrgName)).map(cloudspace -> cloudspace.getName()).collect(Collectors.toList());
 	}
 	
 	

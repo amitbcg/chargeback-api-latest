@@ -1,13 +1,4 @@
 spring:
   application:
-    name: metrics-service
-    
-    
-eureka:
-  instance:
-    hostname: eureka-service.cglean.com
-    non-secure-port: 80
-  client:
-    service-url:
-      defualtZone: https://eureka-service.cglean.com/eureka/     
+    name: chargeback-api-service
  

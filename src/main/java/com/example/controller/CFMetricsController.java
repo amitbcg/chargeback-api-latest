@@ -1,10 +1,13 @@
 package com.example.controller;
 
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -14,6 +17,7 @@ import org.cloudfoundry.client.lib.CloudFoundryClient;
 import org.cloudfoundry.client.lib.HttpProxyConfiguration;
 import org.cloudfoundry.client.lib.domain.CloudApplication;
 import org.cloudfoundry.client.lib.domain.CloudSpace;
+import org.cloudfoundry.client.lib.domain.InstanceStats;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
@@ -70,28 +74,41 @@ public class CFMetricsController {
 	@RequestMapping(value = "/getInstanceMetrics", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)	
 	public List<ChargeBackUsageResponse> getApplicationInstancesData() {
 		
+
 		CloudFoundryClient client = loginCloudFoundry();
-		final List<CloudApplication> cloudApplications = client.getApplications();
 		final List<CloudSpace> cloudSpaces = client.getSpaces();
-		ChargeBackAggregrateVO chargeBackAggregrateVO;
-		final List<ChargeBackAggregrateVO> chargeBackAggregrateVOList = new ArrayList<>();
-		for(final CloudApplication application : cloudApplications){
-			chargeBackAggregrateVO = new ChargeBackAggregrateVO();
-			chargeBackAggregrateVO.setApplicationStats(client.getApplicationStats(application.getName()));
-			chargeBackAggregrateVO.setCloudApplication(application);
-			chargeBackAggregrateVO.setSpaces(cloudSpaces);
-			chargeBackAggregrateVOList.add(chargeBackAggregrateVO);
+		final List<CloudApplication> cloudApplications = client.getApplications();
+		Map<String, String> spaceOrgMap = new HashMap<>();
+		
+		for(CloudSpace cloudSpace :cloudSpaces){
+			spaceOrgMap.put(cloudSpace.getMeta().getGuid().toString(), cloudSpace.getOrganization().getName());
 		}
-		return chargebackService.getChargeBackUsage(chargeBackAggregrateVOList);
+		List<ChargeBackUsageResponse> chargeBackUsageResponseList = new ArrayList<>();
+		for(CloudApplication cloudApplication : cloudApplications){
+			for(InstanceStats instanceStats : client.getApplicationStats(cloudApplication.getName()).getRecords()){
+	    		final ChargeBackUsageResponse chargeBackUsageResponse = new ChargeBackUsageResponse();
+				chargeBackUsageResponse.setAppname(cloudApplication.getName());
+	    		chargeBackUsageResponse.setCpu(instanceStats.getUsage().getCpu());
+	    		chargeBackUsageResponse.setDisk(instanceStats.getUsage().getDisk());
+	    		chargeBackUsageResponse.setInstanceIndex(instanceStats.getId());
+	    		chargeBackUsageResponse.setMemory(instanceStats.getUsage().getMem());
+	    		chargeBackUsageResponse.setTime(instanceStats.getUsage().getTime());
+	    		chargeBackUsageResponse.setSpaceName(cloudApplication.getSpace().getName());
+	    		chargeBackUsageResponse.setOrgName(spaceOrgMap.get(cloudApplication.getSpace().getMeta().getGuid().toString()));
+	    		chargeBackUsageResponseList.add(chargeBackUsageResponse);
+			}
+		}
+	return chargeBackUsageResponseList;
 	}
 	
 	@RequestMapping(value = "/getSpaceList/{orgName:.+}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)	
-	public List<String> getApplicationSpaceByOrg(@PathVariable String orgName ){
+	public List<String> getApplicationSpaceByOrg(@PathVariable String orgName ) throws UnsupportedEncodingException{
 		
 		CloudFoundryClient client = loginCloudFoundry();
 		client.login();
+		String decodedOrgName = URLDecoder.decode(orgName,"UTF-8");
 		return client.getSpaces().stream().
-				filter(cloudspace -> cloudspace.getOrganization().getName().equals(orgName)).map(cloudspace -> cloudspace.getName()).collect(Collectors.toList());
+				filter(cloudspace -> cloudspace.getOrganization().getName().equals(decodedOrgName)).map(cloudspace -> cloudspace.getName()).collect(Collectors.toList());
 	}
 	
 	
@@ -113,7 +130,6 @@ public class CFMetricsController {
 	private CloudFoundryClient loginCloudFoundry() {
 		CloudCredentials credentials = new CloudCredentials("amit.bansal@capgemini.com", "Capgemini2016");
 		//CloudFoundryClient client = new CloudFoundryClient(credentials, getTargetURL("https://api.cglean.com"));
-		
 		CloudFoundryClient client = new CloudFoundryClient(credentials, getTargetURL("http://api.cglean.com"), null, (HttpProxyConfiguration) null, true);
 		return client;
 		
@@ -121,10 +137,32 @@ public class CFMetricsController {
 	
 	
 	@RequestMapping(value = "/getapps", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<CloudApplication> getapps() {
+	public List<ChargeBackUsageResponse> getapps() {
 
 		CloudFoundryClient client = loginCloudFoundry();
-		return client.getApplications();
+		final List<CloudSpace> cloudSpaces = client.getSpaces();
+		final List<CloudApplication> cloudApplications = client.getApplications();
+		Map<String, String> spaceOrgMap = new HashMap<>();
+		
+		for(CloudSpace cloudSpace :cloudSpaces){
+			spaceOrgMap.put(cloudSpace.getMeta().getGuid().toString(), cloudSpace.getOrganization().getName());
+		}
+		List<ChargeBackUsageResponse> chargeBackUsageResponseList = new ArrayList<>();
+		for(CloudApplication cloudApplication : cloudApplications){
+			for(InstanceStats instanceStats : client.getApplicationStats(cloudApplication.getName()).getRecords()){
+	    		final ChargeBackUsageResponse chargeBackUsageResponse = new ChargeBackUsageResponse();
+				chargeBackUsageResponse.setAppname(cloudApplication.getName());
+	    		chargeBackUsageResponse.setCpu(instanceStats.getUsage().getCpu());
+	    		chargeBackUsageResponse.setDisk(instanceStats.getUsage().getDisk());
+	    		chargeBackUsageResponse.setInstanceIndex(instanceStats.getId());
+	    		chargeBackUsageResponse.setMemory(instanceStats.getUsage().getMem());
+	    		chargeBackUsageResponse.setTime(instanceStats.getUsage().getTime());
+	    		chargeBackUsageResponse.setSpaceName(cloudApplication.getSpace().getName());
+	    		chargeBackUsageResponse.setOrgName(spaceOrgMap.get(cloudApplication.getSpace().getMeta().getGuid().toString()));
+	    		chargeBackUsageResponseList.add(chargeBackUsageResponse);
+			}
+		}
+	return chargeBackUsageResponseList;
 
 	}
 	

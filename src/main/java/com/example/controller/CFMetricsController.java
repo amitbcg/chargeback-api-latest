@@ -147,8 +147,8 @@ public class CFMetricsController {
 	}
 	@RequestMapping(value="/getHistorical/{fromDate}/{toDate}/{orgName:.+}", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
 	public Map<String, List<Usage>> getUsageDataBetweenDates(@PathVariable @DateTimeFormat(pattern="yyyy-MM-dd") final Date fromDate, 
-			@PathVariable @DateTimeFormat(pattern="yyyy-MM-dd") final Date toDate, @PathVariable final String orgName){
-		return chargebackService.getUsageDataBetweenDates(fromDate, toDate, orgName);
+			@PathVariable @DateTimeFormat(pattern="yyyy-MM-dd") final Date toDate, @PathVariable final String orgName) throws UnsupportedEncodingException{
+		return chargebackService.getUsageDataBetweenDates(fromDate, toDate, URLDecoder.decode(orgName,"UTF-8"));
 	}
 
 	

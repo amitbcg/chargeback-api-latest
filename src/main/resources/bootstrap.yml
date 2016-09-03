@@ -1,4 +1,3 @@
 spring:
   application:
-    name: chargeback-api-service
- 
+    name: chargeback-api

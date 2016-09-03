@@ -28,12 +28,10 @@ public class Usage {
 	private String appname;
 	private String spaceName;
 	private int instanceIndex;
-	
-	
+
 	public long getUsageId() {
 		return usageId;
 	}
-
 
 	public void setUsageId(long usageId) {
 		this.usageId = usageId;

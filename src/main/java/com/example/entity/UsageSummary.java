@@ -23,8 +23,8 @@ public class UsageSummary {
 
 	private Date toDate;
 	private double cpu;
-	private long memory;
-	private long disk;
+	private double memory;
+	private double disk;
 	private String orgName;
 	private String appname;
 	private String spaceName;
@@ -56,18 +56,7 @@ public class UsageSummary {
 	public void setCpu(double cpu) {
 		this.cpu = cpu;
 	}
-	public long getMemory() {
-		return memory;
-	}
-	public void setMemory(long memory) {
-		this.memory = memory;
-	}
-	public long getDisk() {
-		return disk;
-	}
-	public void setDisk(long disk) {
-		this.disk = disk;
-	}
+	
 	
 	public String getOrgName() {
 		return orgName;
@@ -98,6 +87,18 @@ public class UsageSummary {
 	}
 	public void setFrequency(String frequency) {
 		this.frequency = frequency;
+	}
+	public double getMemory() {
+		return memory;
+	}
+	public void setMemory(double memory) {
+		this.memory = memory;
+	}
+	public double getDisk() {
+		return disk;
+	}
+	public void setDisk(double disk) {
+		this.disk = disk;
 	}
 	
 	

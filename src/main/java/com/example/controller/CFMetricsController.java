@@ -75,17 +75,17 @@ public class CFMetricsController {
 	public List<ChargeBackUsageResponse> getApplicationInstancesData() {
 		
 
-		CloudFoundryClient client = loginCloudFoundry();
+		final CloudFoundryClient client = loginCloudFoundry();
 		final List<CloudSpace> cloudSpaces = client.getSpaces();
 		final List<CloudApplication> cloudApplications = client.getApplications();
-		Map<String, String> spaceOrgMap = new HashMap<>();
+		final Map<String, String> spaceOrgMap = new HashMap<>();
 		
-		for(CloudSpace cloudSpace :cloudSpaces){
+		for(final CloudSpace cloudSpace :cloudSpaces){
 			spaceOrgMap.put(cloudSpace.getMeta().getGuid().toString(), cloudSpace.getOrganization().getName());
 		}
-		List<ChargeBackUsageResponse> chargeBackUsageResponseList = new ArrayList<>();
-		for(CloudApplication cloudApplication : cloudApplications){
-			for(InstanceStats instanceStats : client.getApplicationStats(cloudApplication.getName()).getRecords()){
+		final List<ChargeBackUsageResponse> chargeBackUsageResponseList = new ArrayList<>();
+		for(final CloudApplication cloudApplication : cloudApplications){
+			for(final InstanceStats instanceStats : client.getApplicationStats(cloudApplication.getName()).getRecords()){
 	    		final ChargeBackUsageResponse chargeBackUsageResponse = new ChargeBackUsageResponse();
 				chargeBackUsageResponse.setAppname(cloudApplication.getName());
 	    		chargeBackUsageResponse.setCpu(instanceStats.getUsage().getCpu());
@@ -135,38 +135,6 @@ public class CFMetricsController {
 		
 	}
 	
-	
-	@RequestMapping(value = "/getapps", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<ChargeBackUsageResponse> getapps() {
-
-		CloudFoundryClient client = loginCloudFoundry();
-		final List<CloudSpace> cloudSpaces = client.getSpaces();
-		final List<CloudApplication> cloudApplications = client.getApplications();
-		Map<String, String> spaceOrgMap = new HashMap<>();
-		
-		for(CloudSpace cloudSpace :cloudSpaces){
-			spaceOrgMap.put(cloudSpace.getMeta().getGuid().toString(), cloudSpace.getOrganization().getName());
-		}
-		List<ChargeBackUsageResponse> chargeBackUsageResponseList = new ArrayList<>();
-		for(CloudApplication cloudApplication : cloudApplications){
-			for(InstanceStats instanceStats : client.getApplicationStats(cloudApplication.getName()).getRecords()){
-	    		final ChargeBackUsageResponse chargeBackUsageResponse = new ChargeBackUsageResponse();
-				chargeBackUsageResponse.setAppname(cloudApplication.getName());
-	    		chargeBackUsageResponse.setCpu(instanceStats.getUsage().getCpu());
-	    		chargeBackUsageResponse.setDisk(instanceStats.getUsage().getDisk());
-	    		chargeBackUsageResponse.setInstanceIndex(instanceStats.getId());
-	    		chargeBackUsageResponse.setMemory(instanceStats.getUsage().getMem());
-	    		chargeBackUsageResponse.setTime(instanceStats.getUsage().getTime());
-	    		chargeBackUsageResponse.setSpaceName(cloudApplication.getSpace().getName());
-	    		chargeBackUsageResponse.setOrgName(spaceOrgMap.get(cloudApplication.getSpace().getMeta().getGuid().toString()));
-	    		chargeBackUsageResponseList.add(chargeBackUsageResponse);
-			}
-		}
-	return chargeBackUsageResponseList;
-
-	}
-	
-	
 	/**
 	 * Store the Data into database
 	 * @param usageList
@@ -177,11 +145,10 @@ public class CFMetricsController {
 			chargebackService.persistUsageData(usage);
 		}
 	}
-	
-	@RequestMapping(value="/getHistorical/{fromDate}/{toDate}", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
-	public Map<String, List<Usage>> getUsageDataBetweenDates(@PathVariable @DateTimeFormat(pattern="yyyy-MM-dd") Date fromDate, 
-			@PathVariable @DateTimeFormat(pattern="yyyy-MM-dd") Date toDate){
-		return chargebackService.getUsageDataBetweenDates(fromDate, toDate);
+	@RequestMapping(value="/getHistorical/{fromDate}/{toDate}/{orgName:.+}", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
+	public Map<String, List<Usage>> getUsageDataBetweenDates(@PathVariable @DateTimeFormat(pattern="yyyy-MM-dd") final Date fromDate, 
+			@PathVariable @DateTimeFormat(pattern="yyyy-MM-dd") final Date toDate, @PathVariable final String orgName){
+		return chargebackService.getUsageDataBetweenDates(fromDate, toDate, orgName);
 	}
 
 	
@@ -189,6 +156,7 @@ public class CFMetricsController {
 	public void storeUsageSummary(@RequestBody List<UsageSummary> usageSummaryList ){
 		for(UsageSummary usageSummary : usageSummaryList){
 			chargebackService.persistUsageSummaryData(usageSummary);
+			
 		}
 	}
 		
@@ -230,7 +198,6 @@ public class CFMetricsController {
 						cpu += ((client.getApplicationStats(chargeBackUsageResponse.getAppname()).getRecords().get(0).getUsage().getCpu()) /size);
 					}
 				}
-			
 				return cpu;
 			}else if(resourceType.equals("DISK")){
 				double disk= 0.0;

@@ -82,23 +82,19 @@ public class ChargeBackServiceImpl implements ChargeBackService {
 	}
 	
 	@Transactional(isolation=Isolation.READ_COMMITTED, propagation=Propagation.REQUIRED, rollbackFor=Exception.class)
-	public Map<String, List<Usage>> getUsageDataBetweenDates(final Date fromDate , final Date toDate){
-		
-		Map<String, List<Usage>> summaryUsageMap = new HashMap<>();
-		List<String> orgNameList  = usageRepository.findDistinctOrgName(fromDate, toDate);
-		for(String orgName : orgNameList){
-			List<String> spaceList = usageRepository.findDistinctSpaceName(fromDate, toDate, orgName);
-			for(String space: spaceList){
-				List<String> appNameList = usageRepository.findDistinctApps(fromDate, toDate, orgName, space);
-						for(String appname : appNameList){
-							List<Integer> instanceIndexList = usageRepository.findIndexesforApp(fromDate, toDate, orgName, space, appname);
-							for(Integer index : instanceIndexList){
-								List<Usage> usagePerAppPerInstance = usageRepository.findByDateAndNameAndApplication(fromDate, toDate, orgName, space, appname, index);
+	public Map<String, List<Usage>> getUsageDataBetweenDates(final Date fromDate , final Date toDate, final String orgName){
+		final Map<String, List<Usage>> summaryUsageMap = new HashMap<>();
+			final List<String> spaceList = usageRepository.findDistinctSpaceName(fromDate, toDate, orgName);
+			for(final String space: spaceList){
+				final List<String> appNameList = usageRepository.findDistinctApps(fromDate, toDate, orgName, space);
+						for(final String appname : appNameList){
+							final List<Integer> instanceIndexList = usageRepository.findIndexesforApp(fromDate, toDate, orgName, space, appname);
+							for(final Integer index : instanceIndexList){
+								final List<Usage> usagePerAppPerInstance = usageRepository.findByDateAndNameAndApplication(fromDate, toDate, orgName, space, appname, index);
 								summaryUsageMap.put(orgName+space+appname+index, usagePerAppPerInstance);
 							}
 						}
 					}
-		}
 		return summaryUsageMap;
 	}
 	

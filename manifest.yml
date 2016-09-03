@@ -1,9 +1,9 @@
 ---
 applications:
 - name: chargeback-api
+  host: chargeback-api-mkt
   memory: 512M
   random-route: true
-  host: chargeback-api
 
  
-path: target/demo-0.0.1-SNAPSHOT.jar
+path: target/chargeback-api-0.0.1-SNAPSHOT.jar

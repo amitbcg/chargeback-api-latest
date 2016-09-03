@@ -30,3 +30,6 @@ spring:
 spring:
   profiles:
     active: local-mssql
+---
+server:
+  context-path: /metrics    

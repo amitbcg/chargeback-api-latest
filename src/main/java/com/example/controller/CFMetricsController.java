@@ -128,9 +128,9 @@ public class CFMetricsController {
 	}
 	
 	private CloudFoundryClient loginCloudFoundry() {
-		CloudCredentials credentials = new CloudCredentials("amit.bansal@capgemini.com", "Capgemini2016");
+		CloudCredentials credentials = new CloudCredentials("amit.bansal@capgemini.com", "trtr22");
 		//CloudFoundryClient client = new CloudFoundryClient(credentials, getTargetURL("https://api.cglean.com"));
-		CloudFoundryClient client = new CloudFoundryClient(credentials, getTargetURL("http://api.cglean.com"), null, (HttpProxyConfiguration) null, true);
+		CloudFoundryClient client = new CloudFoundryClient(credentials, getTargetURL("http://api.run.pivotal.io"), null, (HttpProxyConfiguration) null, true);
 		return client;
 		
 	}

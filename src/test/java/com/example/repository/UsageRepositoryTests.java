@@ -11,12 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.chargeback.MetricsFetchDemoApplication;
+import com.chargeback.ChargeBackMetricsFetchApplication;
 import com.chargeback.entity.Usage;
 import com.chargeback.repository.UsageRepository;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = MetricsFetchDemoApplication.class)
+@SpringApplicationConfiguration(classes = ChargeBackMetricsFetchApplication.class)
 public class UsageRepositoryTests {
 
 	@Autowired

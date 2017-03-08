@@ -38,7 +38,7 @@ spring:
 spring:
   datasource:
     url:
-      jdbc:mysql://localhost:3306/amitdb?useSSL=false
+      ${cloud.services.mysql.connection.jdbcurl:jdbc:mysql://localhost:3306/amitdb}
 ---
 spring:
   jpa:
@@ -60,4 +60,7 @@ hystrix:
       execution:
         timeout:
           enabled: false      
-      
+---
+management:
+  security:
+    enabled: false      

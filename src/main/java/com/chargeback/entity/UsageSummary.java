@@ -1,4 +1,4 @@
-package com.example.entity;
+package com.chargeback.entity;
 
 import java.util.Date;
 

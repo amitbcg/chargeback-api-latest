@@ -1,4 +1,4 @@
-package com.example.service.impl;
+package com.chargeback.service.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,13 +15,13 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.entity.Usage;
-import com.example.entity.UsageSummary;
-import com.example.repository.UsageRepository;
-import com.example.repository.UsageSummaryRepository;
-import com.example.service.ChargeBackService;
-import com.example.vo.ChargeBackAggregrateVO;
-import com.example.vo.ChargeBackUsageResponse;
+import com.chargeback.entity.Usage;
+import com.chargeback.entity.UsageSummary;
+import com.chargeback.repository.UsageRepository;
+import com.chargeback.repository.UsageSummaryRepository;
+import com.chargeback.service.ChargeBackService;
+import com.chargeback.vo.ChargeBackAggregrateVO;
+import com.chargeback.vo.ChargeBackUsageResponse;
 
 /**
  * 
@@ -97,7 +97,6 @@ public class ChargeBackServiceImpl implements ChargeBackService {
 					}
 		return summaryUsageMap;
 	}
-	
 	
 }
 

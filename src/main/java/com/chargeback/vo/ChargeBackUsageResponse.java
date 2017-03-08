@@ -1,4 +1,4 @@
-package com.example.vo;
+package com.chargeback.vo;
 
 import java.util.Date;
 /**

@@ -1,4 +1,4 @@
-package com.example.repository;
+package com.chargeback.repository;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
-import com.example.entity.Usage;
+import com.chargeback.entity.Usage;
 
 public interface UsageRepository extends CrudRepository<Usage, Serializable>{
 

@@ -83,7 +83,8 @@ public class CFMetricsController {
 
 	@RequestMapping(value = "/getInstanceMetrics", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<ChargeBackUsageResponse> getApplicationInstancesData() {
-
+	
+		
 		final CloudFoundryClient client = loginCloudFoundry();
 		final List<CloudSpace> cloudSpaces = client.getSpaces();
 		final List<CloudApplication> cloudApplications = client.getApplications();
@@ -112,6 +113,8 @@ public class CFMetricsController {
 		return chargeBackUsageResponseList;
 	}
 
+	
+	
 	@RequestMapping(value = "/getSpaceList/{orgName:.+}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<String> getApplicationSpaceByOrg(@PathVariable String orgName) throws UnsupportedEncodingException {
 

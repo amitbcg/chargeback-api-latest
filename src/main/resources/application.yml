@@ -15,17 +15,7 @@ management:
     enabled: false
     
 ---
-spring:
-  profiles: local-mssql
-  datasource:
-    url: jdbc:mysql://localhost:3306/amitdb?useSSL=false
-    username: root
-    password: root
-  jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: create-drop
----
+
 server:
   context-path: /metrics
 ---
@@ -35,11 +25,7 @@ spring:
       hibernate.dialect:
         org.hibernate.dialect.MySQL5Dialect
 ---
-spring:
-  datasource:
-    url:
-      ${cloud.services.mysql.connection.jdbcurl:jdbc:mysql://localhost:3306/amitdb}
----
+
 spring:
   jpa:
     hibernate:
@@ -63,4 +49,10 @@ hystrix:
 ---
 management:
   security:
-    enabled: false      
+    enabled: false
+---
+endpoints:
+  env:
+    enabled: false
+
+    

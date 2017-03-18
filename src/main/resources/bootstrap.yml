@@ -1,3 +1,6 @@
 spring:
   application:
     name: chargeback-api
+  cloud:
+    config:
+      uri: http://localhost:8080

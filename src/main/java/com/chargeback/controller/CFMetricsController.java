@@ -18,7 +18,6 @@ import org.cloudfoundry.client.lib.domain.CloudApplication;
 import org.cloudfoundry.client.lib.domain.CloudSpace;
 import org.cloudfoundry.client.lib.domain.InstanceStats;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,23 +29,24 @@ import org.springframework.web.bind.annotation.RestController;
 import com.chargeback.entity.Usage;
 import com.chargeback.entity.UsageSummary;
 import com.chargeback.service.ChargeBackService;
+import com.chargeback.util.PCFConfiguration;
 import com.chargeback.vo.ChargeBackAggregrateVO;
 import com.chargeback.vo.ChargeBackUsageResponse;
 
 @RestController
 public class CFMetricsController {
 
+	private final ChargeBackService chargebackService;
+
+	private final PCFConfiguration configuration;
+	
+	
 	@Autowired
-	private ChargeBackService chargebackService;
-
-	@Value("${user.name:NODEFAULT}")
-	private String username;
-
-	@Value("${user.password:NODEFAULT}")
-	private String password;
-
-	@Value("${targetURL:http://api.run.pivotal.io}")
-	private String targetURL;
+	public CFMetricsController(ChargeBackService chargebackService, PCFConfiguration configuration) {
+		super();
+		this.chargebackService = chargebackService;
+		this.configuration = configuration;
+	}
 
 	/**
 	 * This Controller fetches the free available resource based on the Resource
@@ -55,7 +55,6 @@ public class CFMetricsController {
 	 * @param resourceType
 	 * @return
 	 */
-
 	@RequestMapping(value = "/getFreeResource/{resourceType}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public String getFreeResource(@PathVariable final String resourceType) {
 
@@ -142,8 +141,8 @@ public class CFMetricsController {
 	}
 
 	private CloudFoundryClient loginCloudFoundry() {
-		CloudCredentials credentials = new CloudCredentials(username, password);
-		CloudFoundryClient client = new CloudFoundryClient(credentials, getTargetURL(targetURL));
+		CloudCredentials credentials = new CloudCredentials(configuration.getName(), configuration.getPassword());
+		CloudFoundryClient client = new CloudFoundryClient(credentials, getTargetURL(configuration.getTargetURL()));
 		return client;
 
 	}

@@ -91,7 +91,7 @@ public class ChargeBackServiceImpl implements ChargeBackService {
 							final List<Integer> instanceIndexList = usageRepository.findIndexesforApp(fromDate, toDate, orgName, space, appname);
 							for(final Integer index : instanceIndexList){
 								final List<Usage> usagePerAppPerInstance = usageRepository.findByDateAndNameAndApplication(fromDate, toDate, orgName, space, appname, index);
-								summaryUsageMap.put(orgName+space+appname+index, usagePerAppPerInstance);
+								summaryUsageMap.put(orgName+ space+ appname +  index, usagePerAppPerInstance);
 							}
 						}
 					}

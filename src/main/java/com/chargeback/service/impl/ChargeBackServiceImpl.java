@@ -97,8 +97,4 @@ public class ChargeBackServiceImpl implements ChargeBackService {
 					}
 		return summaryUsageMap;
 	}
-	
 }
-
-
-

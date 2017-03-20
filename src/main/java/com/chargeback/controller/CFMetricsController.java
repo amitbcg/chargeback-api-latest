@@ -5,6 +5,8 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -160,11 +162,12 @@ public class CFMetricsController {
 	}
 
 	@RequestMapping(value = "/getHistorical/{fromDate}/{toDate}/{orgName:.+}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public Map<String, List<Usage>> getUsageDataBetweenDates(
-			@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") final Date fromDate,
-			@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") final Date toDate, @PathVariable final String orgName)
-			throws UnsupportedEncodingException {
-		return chargebackService.getUsageDataBetweenDates(fromDate, toDate, URLDecoder.decode(orgName, "UTF-8"));
+	public Map<String, List<Usage>> getUsageDataBetweenDates (
+			@PathVariable  final String fromDate,
+			@PathVariable  final String toDate, @PathVariable final String orgName)
+			throws UnsupportedEncodingException, ParseException {
+		SimpleDateFormat dateFormat =  new SimpleDateFormat("yyyy-MM-dd");
+		return chargebackService.getUsageDataBetweenDates(dateFormat.parse(fromDate), dateFormat.parse(toDate), URLDecoder.decode(orgName, "UTF-8"));
 	}
 
 	@RequestMapping(value = "/submit/summary", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)

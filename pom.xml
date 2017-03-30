@@ -30,14 +30,6 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>io.pivotal.spring.cloud</groupId>
-				<artifactId>spring-cloud-services-dependencies</artifactId>
-				<version>1.1.1.RELEASE</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-
-			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-dependencies</artifactId>
 				<version>Camden.SR6</version>
@@ -45,7 +37,7 @@
 				<scope>import</scope>
 			</dependency>
 		</dependencies>
-</dependencyManagement>
+	</dependencyManagement>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -57,10 +49,6 @@
 			<artifactId>cloudfoundry-client-lib</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>io.pivotal.spring.cloud</groupId>
-			<artifactId>spring-cloud-services-starter-service-registry</artifactId>
-		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -72,7 +60,7 @@
 			<artifactId>spring-cloud-starter-eureka</artifactId>
 		</dependency>
 
-		
+
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-config</artifactId>
@@ -92,8 +80,8 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
-		
-		
+
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-rest</artifactId>
@@ -118,7 +106,7 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-activemq</artifactId>
-		
+
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>

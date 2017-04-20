@@ -144,7 +144,7 @@ public class CFMetricsController {
 
 	private CloudFoundryClient loginCloudFoundry() {
 		CloudCredentials credentials = new CloudCredentials(configuration.getName(), configuration.getPassword());
-		CloudFoundryClient client = new CloudFoundryClient(credentials, getTargetURL(configuration.getTargetURL()));
+		CloudFoundryClient client = new CloudFoundryClient(credentials, getTargetURL(configuration.getTargetURL()), true);
 		return client;
 
 	}

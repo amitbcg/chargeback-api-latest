@@ -11,4 +11,4 @@ applications:
     
   env:
     SPRING_PROFILES_ACTIVE: cloud
-    CF_TARGET: https://api.run.pivotal.io
+    CF_TARGET: http://api.cglean.com
